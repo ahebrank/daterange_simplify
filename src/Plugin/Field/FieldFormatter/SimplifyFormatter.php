@@ -168,7 +168,10 @@ class SimplifyFormatter extends FormatterBase implements ContainerFactoryPluginI
     $settings = $this->getSettings();
 
     foreach ($items as $delta => $item) {
-      $simplified = $this->simplify->daterange($item->value, $item->value2,
+      $start = $this->tzAdjust($item->value);
+      $end = $this->tzAdjust($item->end_value);
+      
+      $simplified = $this->simplify->daterange($start, $end,
         $settings['date_format'], 
         $settings['time_format'], 
         $settings['range_separator'], 
@@ -183,5 +186,18 @@ class SimplifyFormatter extends FormatterBase implements ContainerFactoryPluginI
     }
 
     return $elements;
+  }
+
+  /**
+   * correct for user timezone
+   *
+   * @param [type] $datetime
+   * @return string
+   */
+  private function tzAdjust($datetime) {
+    $date = new \DateTime($datetime, new \DateTimeZone('UTC'));
+    $tz = drupal_get_user_timezone();
+    $date->setTimezone(new \DateTimeZone($tz));
+    return $date->format('c');
   }
 }
