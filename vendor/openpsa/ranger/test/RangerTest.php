@@ -154,4 +154,59 @@ class RangerTest extends PHPUnit_Framework_TestCase
         date_default_timezone_set($backup);
         $this->assertEquals('09.03.2016, 00:00 – 01:00', $formatted);
     }
+
+    /**
+     * @dataProvider providerNoDate
+     */
+    public function testNoDate($language, $start, $end, $expected)
+    {
+        $formatter = new Ranger($language);
+        $formatter
+            ->setDateType(IntlDateFormatter::NONE)
+            ->setTimeType(IntlDateFormatter::SHORT);
+        $this->assertEquals($expected, $formatter->format($start, $end));
+    }
+
+    public function providerNoDate()
+    {
+        return [
+            ['en', '2013-10-05 10:00:00', '2013-10-05 13:30:00', '10:00 AM – 1:30 PM'],
+            ['en', '2013-10-05 12:20:00', '2013-10-05 13:30:00', '12:20 – 1:30 PM'],
+            ['en', '12:20:00', '13:30:00', '12:20 – 1:30 PM'],
+            // get a little weird
+            ['en', '2013-10-05 12:20:00', '2013-10-07 13:30:00', '12:20 – 1:30 PM'],
+            ['en', '2012-06-05 10:20:00', '2013-10-07 13:30:00', '10:20 AM – 1:30 PM'], 
+        ];
+    }
+
+    public function testNoMutation() 
+    {
+        // changing formats should not change the stored dates
+        $start = new \DateTime('2012-01-10 10:00:00');
+        $end = new \DateTime('2012-01-17 11:00:00');
+        $r = new Ranger('en');
+        $r->setDateType(\IntlDateFormatter::NONE);
+        $r->setTimeType(\IntlDateFormatter::SHORT);
+        $r->format($start, $end);
+        $r->setDateType(\IntlDateFormatter::MEDIUM);
+        $r->setTimeType(\IntlDateFormatter::NONE);
+        $formatted = $r->format($start, $end);
+        $this->assertEquals('Jan 10–17, 2012', $formatted);
+    }
+
+    public function testNoMutation2() 
+    {
+        // checks same as above but a different approach
+        $start = new \DateTime('2012-01-10 10:00:00');
+        $end = new \DateTime('2012-01-17 11:00:00');
+        $r = new Ranger('en');
+        $r->setDateType(\IntlDateFormatter::MEDIUM);
+        $v1 = $r->format($start, $end);
+        $r->setDateType(\IntlDateFormatter::NONE);
+        $r->format($start, $end);
+        $r->setDateType(\IntlDateFormatter::MEDIUM);
+        $v2 = $r->format($start, $end);
+        $this->assertEquals($v1, $v2);
+    }
+
 }

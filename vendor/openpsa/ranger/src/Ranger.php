@@ -268,12 +268,23 @@ class Ranger
     {
         $tokens = [];
 
-        $intl = new IntlDateFormatter($this->locale, $this->date_type, IntlDateFormatter::NONE, $date->getTimezone()->getName());
-        $formatted = $intl->format((int) $date->format('U'));
+        $formatted = "";
+        if ($this->date_type === IntlDateFormatter::NONE && $this->time_type === IntlDateFormatter::NONE) {
+            // why would you want this?
+            return $tokens;
+        }
+
+        if ($this->date_type !== IntlDateFormatter::NONE) {
+            $intl = new IntlDateFormatter($this->locale, $this->date_type, IntlDateFormatter::NONE, $date->getTimezone()->getName());
+            $formatted .= $intl->format((int) $date->format('U'));
+            if ($this->time_type !== IntlDateFormatter::NONE) {
+                $formatted .= $this->date_time_separator;
+            }
+        }
 
         if ($this->time_type !== IntlDateFormatter::NONE) {
             $intl = new IntlDateFormatter($this->locale, IntlDateFormatter::NONE, $this->time_type, $date->getTimezone()->getName());
-            $formatted .= $this->date_time_separator . $intl->format((int) $date->format('U'));
+            $formatted .= $intl->format((int) $date->format('U'));
         }
 
         $type = null;
@@ -304,21 +315,29 @@ class Ranger
      */
     private function find_best_match(DateTime $start, DateTime $end)
     {
+        // make a copy of end because we might change pieces of it
+        $end_copy = clone $end;
+
+        // ignore the date if it's not output
+        if ($this->date_type === IntlDateFormatter::NONE) {
+            $end_copy->setDate($start->format('Y'), $start->format('m'), $start->format('d'));
+        }
+
         $best_match = -2;
-        if ($start->format('Y') !== $end->format('Y')) {
+        if ($start->format('Y') !== $end_copy->format('Y')) {
             $best_match = self::TIMEZONE;
-        } elseif ($start->format('m') !== $end->format('m')) {
+        } elseif ($start->format('m') !== $end_copy->format('m')) {
             $best_match = self::YEAR;
-        } elseif ($start->format('d') !== $end->format('d')) {
+        } elseif ($start->format('d') !== $end_copy->format('d')) {
             $best_match = self::MONTH;
-        } elseif ($start->format('a') !== $end->format('a')) {
+        } elseif ($start->format('a') !== $end_copy->format('a')) {
             $best_match = self::DAY;
-        } elseif ($start->format('H') !== $end->format('H')) {
+        } elseif ($start->format('H') !== $end_copy->format('H')) {
             $best_match = self::AM;
-        } elseif ($start->format('i') !== $end->format('i')) {
+        } elseif ($start->format('i') !== $end_copy->format('i')) {
             //it makes no sense to display something like 10:00:00 - 30:00...
             $best_match = self::AM;
-        } elseif ($start->format('s') !== $end->format('s')) {
+        } elseif ($start->format('s') !== $end_copy->format('s')) {
             //it makes no sense to display something like 10:00:00 - 30:00...
             $best_match = self::AM;
         } else {
@@ -326,13 +345,13 @@ class Ranger
         }
 
         //set to same time to avoid DST problems
-        $tz_end = clone $end;
-        $tz_end->setTimestamp((int) $start->format('U'));
-        if (   $start->format('T') !== $tz_end->format('T')
+        $end_copy->setTimestamp((int) $start->format('U'));
+        if (   $start->format('T') !== $end_copy->format('T')
             || (   $this->time_type !== IntlDateFormatter::NONE
                 && $best_match < self::DAY)) {
             $best_match = -2;
         }
+
         return $best_match;
     }
 
@@ -342,12 +361,18 @@ class Ranger
             return;
         }
 
-        $intl = new IntlDateFormatter($this->locale, $this->date_type, IntlDateFormatter::NONE);
-        $pattern = $intl->getPattern();
+        $pattern = "";
+        if ($this->date_type !== IntlDateFormatter::NONE) {
+            $intl = new IntlDateFormatter($this->locale, $this->date_type, IntlDateFormatter::NONE);
+            $pattern .= $intl->getPattern();
+            if ($this->time_type !== IntlDateFormatter::NONE) {
+                $pattern .= "'" . $this->date_time_separator . "'";
+            }
+        }
 
         if ($this->time_type !== IntlDateFormatter::NONE) {
             $intl = new IntlDateFormatter($this->locale, IntlDateFormatter::NONE, $this->time_type);
-            $pattern .= "'" . $this->date_time_separator . "'" . $intl->getPattern();
+            $pattern .= $intl->getPattern();
         }
 
         $esc_active = false;

@@ -4,25 +4,25 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "3e20de23cec2aacca89a25f7e0203067",
+    "content-hash": "ec4e9eb7899da77a1f5a4982ba3b3465",
     "packages": [
         {
             "name": "openpsa/ranger",
-            "version": "v0.3.1",
+            "version": "v0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/flack/ranger.git",
-                "reference": "f9addf0c3e7c9a837a0e8fa025f02bc22bd68c72"
+                "reference": "c0af25836e5923ee69f57ce4a8ff740b19ecfad6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/flack/ranger/zipball/f9addf0c3e7c9a837a0e8fa025f02bc22bd68c72",
-                "reference": "f9addf0c3e7c9a837a0e8fa025f02bc22bd68c72",
+                "url": "https://api.github.com/repos/flack/ranger/zipball/c0af25836e5923ee69f57ce4a8ff740b19ecfad6",
+                "reference": "c0af25836e5923ee69f57ce4a8ff740b19ecfad6",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.4.0",
-                "symfony/intl": "~2.6|~3.4"
+                "symfony/intl": "~2.6|~3.4|~4.0"
             },
             "type": "library",
             "autoload": {
@@ -46,28 +46,28 @@
                 "date range",
                 "time range"
             ],
-            "time": "2018-03-26T14:08:18+00:00"
+            "time": "2018-07-23T12:30:50+00:00"
         },
         {
             "name": "symfony/intl",
-            "version": "v3.4.12",
+            "version": "v4.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/intl.git",
-                "reference": "cffd37585835bad390473a9543039701a03cd12b"
+                "reference": "cb21b901892c0d637f9c2f50860ed2fe29ce4b55"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/intl/zipball/cffd37585835bad390473a9543039701a03cd12b",
-                "reference": "cffd37585835bad390473a9543039701a03cd12b",
+                "url": "https://api.github.com/repos/symfony/intl/zipball/cb21b901892c0d637f9c2f50860ed2fe29ce4b55",
+                "reference": "cb21b901892c0d637f9c2f50860ed2fe29ce4b55",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.5.9|>=7.0.8",
+                "php": "^7.1.3",
                 "symfony/polyfill-intl-icu": "~1.0"
             },
             "require-dev": {
-                "symfony/filesystem": "~2.8|~3.0|~4.0"
+                "symfony/filesystem": "~3.4|~4.0"
             },
             "suggest": {
                 "ext-intl": "to use the component with locales other than \"en\""
@@ -75,7 +75,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.4-dev"
+                    "dev-master": "4.1-dev"
                 }
             },
             "autoload": {
@@ -121,7 +121,7 @@
                 "l10n",
                 "localization"
             ],
-            "time": "2018-06-25T11:10:40+00:00"
+            "time": "2018-06-25T11:12:43+00:00"
         },
         {
             "name": "symfony/polyfill-intl-icu",
