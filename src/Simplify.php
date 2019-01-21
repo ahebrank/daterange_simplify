@@ -15,7 +15,7 @@ class Simplify {
    * see http://php.net/manual/en/class.intldateformatter.php
    *
    * @param bool $restrict_intl : limit options available in the absence of intl support
-   * 
+   *
    * @return array
    */
   public static function getAllowedFormats($restrict_intl = FALSE) {
@@ -25,8 +25,8 @@ class Simplify {
     return ['none', 'full', 'long', 'medium', 'short'];
   }
 
-  /** 
-   * helper function: return an enumerated constant for the format
+  /**
+   * Helper function: return an enumerated constant for the format.
    */
   protected static function getDateFormat($format) {
     switch ($format) {
@@ -45,12 +45,12 @@ class Simplify {
   }
 
   /**
-   * Simplify a date range
+   * Simplify a date range.
    */
   public static function daterange($start, $end, $date_format = 'medium', $time_format = 'short', $range_separator = null, $date_time_separator = null, $locale = 'en') {
     $date_format = Simplify::getDateFormat($date_format);
     $time_format = Simplify::getDateFormat($time_format);
-  
+
     $ranger = new Ranger($locale);
     $ranger
       ->setDateType($date_format)

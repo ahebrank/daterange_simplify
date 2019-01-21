@@ -22,7 +22,7 @@ use Drupal\daterange_simplify\Simplify;
 class SimplifyFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
 
   /**
-   * Simplify service
+   * Simplify service.
    *
    * @var \Drupal\daterange_simplify\Simplify
    */
@@ -135,11 +135,11 @@ class SimplifyFormatter extends FormatterBase implements ContainerFactoryPluginI
     $now = $dt->format('c');
     $in_two_hours = $dt->add(new \DateInterval('PT2H'))->format('c');
     $summary[] = $this->t('2 hours apart: @sample', [
-      '@sample' => $this->simplify->daterange($now, $in_two_hours, 
-                    $settings['date_format'], 
-                    $settings['time_format'], 
-                    $settings['range_separator'], 
-                    $settings['date_time_separator'], 
+      '@sample' => $this->simplify->daterange($now, $in_two_hours,
+                    $settings['date_format'],
+                    $settings['time_format'],
+                    $settings['range_separator'],
+                    $settings['date_time_separator'],
                     $this->language_manager->getCurrentLanguage()->getId()
                   ),
     ]);
@@ -148,11 +148,11 @@ class SimplifyFormatter extends FormatterBase implements ContainerFactoryPluginI
     $now = $dt->format('c');
     $in_two_days = $dt->add(new \DateInterval('P2D'))->format('c');
     $summary[] = $this->t('2 days apart: @sample', [
-      '@sample' => $this->simplify->daterange($now, $in_two_days, 
-                    $settings['date_format'], 
-                    $settings['time_format'], 
-                    $settings['range_separator'], 
-                    $settings['date_time_separator'], 
+      '@sample' => $this->simplify->daterange($now, $in_two_days,
+                    $settings['date_format'],
+                    $settings['time_format'],
+                    $settings['range_separator'],
+                    $settings['date_time_separator'],
                     $this->language_manager->getCurrentLanguage()->getId()
                   ),
     ]);
@@ -170,11 +170,11 @@ class SimplifyFormatter extends FormatterBase implements ContainerFactoryPluginI
     foreach ($items as $delta => $item) {
       $start = $this->tzAdjust($item->value);
       $end = $this->tzAdjust($item->end_value);
-      
+
       $simplified = $this->simplify->daterange($start, $end,
-        $settings['date_format'], 
-        $settings['time_format'], 
-        $settings['range_separator'], 
+        $settings['date_format'],
+        $settings['time_format'],
+        $settings['range_separator'],
         $settings['date_time_separator'],
         $langcode
       );
@@ -189,15 +189,19 @@ class SimplifyFormatter extends FormatterBase implements ContainerFactoryPluginI
   }
 
   /**
-   * correct for user timezone
-   *
-   * @param [type] $datetime
-   * @return string
+   * Correct for user timezone.
    */
   private function tzAdjust($datetime) {
-    $date = new \DateTime($datetime, new \DateTimeZone('UTC'));
     $tz = drupal_get_user_timezone();
-    $date->setTimezone(new \DateTimeZone($tz));
+    if (in_array($tz, timezone_identifiers_list())) {
+      $date = new \DateTime($datetime, new \DateTimeZone('UTC'));
+      $date->setTimezone(new \DateTimeZone($tz));
+    }
+    else {
+      // Bail out.
+      $date = new \DateTime($datetime);
+    }
     return $date->format('c');
   }
+
 }
