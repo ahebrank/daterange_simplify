@@ -9,6 +9,8 @@ use Drupal\Core\Field\FormatterBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
+use DateTime;
+use DateInterval;
 use Drupal\daterange_simplify\Simplify;
 
 /**
@@ -131,9 +133,9 @@ class SimplifyFormatter extends FormatterBase implements ContainerFactoryPluginI
     $settings = $this->getSettings();
     $summary = [];
 
-    $dt = new \DateTime();
+    $dt = new DateTime();
     $now = $dt->format('c');
-    $in_two_hours = $dt->add(new \DateInterval('PT2H'))->format('c');
+    $in_two_hours = $dt->add(new DateInterval('PT2H'))->format('c');
     $summary[] = $this->t('2 hours apart: @sample', [
       '@sample' => $this->simplify->daterange($now, $in_two_hours,
                     $settings['date_format'],
@@ -144,9 +146,9 @@ class SimplifyFormatter extends FormatterBase implements ContainerFactoryPluginI
                   ),
     ]);
 
-    $dt = new \DateTime();
+    $dt = new DateTime();
     $now = $dt->format('c');
-    $in_two_days = $dt->add(new \DateInterval('P2D'))->format('c');
+    $in_two_days = $dt->add(new DateInterval('P2D'))->format('c');
     $summary[] = $this->t('2 days apart: @sample', [
       '@sample' => $this->simplify->daterange($now, $in_two_days,
                     $settings['date_format'],
@@ -168,8 +170,8 @@ class SimplifyFormatter extends FormatterBase implements ContainerFactoryPluginI
     $settings = $this->getSettings();
 
     foreach ($items as $delta => $item) {
-      $start = $this->tzAdjust($item->value);
-      $end = $this->tzAdjust($item->end_value);
+      $start = $this->simplify->prepDate($item->value);
+      $end = $this->simplify->prepDate($item->end_value);
 
       $simplified = $this->simplify->daterange($start, $end,
         $settings['date_format'],
@@ -186,22 +188,6 @@ class SimplifyFormatter extends FormatterBase implements ContainerFactoryPluginI
     }
 
     return $elements;
-  }
-
-  /**
-   * Correct for user timezone.
-   */
-  private function tzAdjust($datetime) {
-    $tz = drupal_get_user_timezone();
-    if (in_array($tz, timezone_identifiers_list())) {
-      $date = new \DateTime($datetime, new \DateTimeZone('UTC'));
-      $date->setTimezone(new \DateTimeZone($tz));
-    }
-    else {
-      // Bail out.
-      $date = new \DateTime($datetime);
-    }
-    return $date->format('c');
   }
 
 }

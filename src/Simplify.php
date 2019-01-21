@@ -8,6 +8,8 @@ if (!class_exists('OpenPsa\Ranger\Ranger')) {
 }
 
 use OpenPsa\Ranger\Ranger;
+use DateTime;
+use DateTimeZone;
 
 class Simplify {
   /**
@@ -47,7 +49,7 @@ class Simplify {
   /**
    * Simplify a date range.
    */
-  public static function daterange($start, $end, $date_format = 'medium', $time_format = 'short', $range_separator = null, $date_time_separator = null, $locale = 'en') {
+  public static function daterange(DateTime $start, DateTime $end, $date_format = 'medium', $time_format = 'short', $range_separator = null, $date_time_separator = null, $locale = 'en') {
     $date_format = Simplify::getDateFormat($date_format);
     $time_format = Simplify::getDateFormat($time_format);
 
@@ -78,4 +80,21 @@ class Simplify {
     }
     return $ranger->format($start, $end);
   }
+
+  /**
+   * Correct for user timezone, convert to DateTime.
+   */
+  public function prepDate($datetime) {
+    $tz = drupal_get_user_timezone();
+    if (in_array($tz, timezone_identifiers_list())) {
+      $date = new DateTime($datetime, new DateTimeZone('UTC'));
+      $date->setTimezone(new DateTimeZone($tz));
+    }
+    else {
+      // Bail out.
+      $date = new DateTime($datetime);
+    }
+    return $date;
+  }
+
 }
