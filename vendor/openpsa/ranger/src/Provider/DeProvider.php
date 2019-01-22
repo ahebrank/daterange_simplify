@@ -11,6 +11,10 @@ use IntlDateFormatter;
 
 class DeProvider implements Provider
 {
+    /**
+     * {@inheritDoc}
+     * @see \OpenPsa\Ranger\Provider\Provider::modifySeparator()
+     */
     public function modifySeparator(IntlDateFormatter $intl, $best_match, $separator)
     {
         if (   $best_match < Ranger::YEAR

@@ -11,6 +11,7 @@ use IntlDateFormatter;
 use DateTime;
 use RuntimeException;
 use InvalidArgumentException;
+use OpenPsa\Ranger\Provider\DefaultProvider;
 
 class Ranger
 {
@@ -25,7 +26,11 @@ class Ranger
     const MINUTE = 8;
     const SECOND = 9;
     const TIMEZONE = -1;
+    const NO_MATCH = -2;
 
+    /**
+     * @var array
+     */
     private $pattern_characters = [
         'G' => self::ERA,
         'y' => self::YEAR,
@@ -114,7 +119,7 @@ class Ranger
     }
 
     /**
-     * @param int $type
+     * @param int $type One of the IntlDateFormatter constants
      * @return self
      */
     public function setDateType($type)
@@ -128,7 +133,7 @@ class Ranger
     }
 
     /**
-     * @param int $type
+     * @param int $type One of the IntlDateFormatter constants
      * @return self
      */
     public function setTimeType($type)
@@ -245,6 +250,7 @@ class Ranger
 
     /**
      * @param int $best_match
+     * @return string
      */
     private function get_range_separator($best_match)
     {
@@ -253,7 +259,7 @@ class Ranger
         $provider_class = 'OpenPsa\\Ranger\\Provider\\' . ucfirst(substr($intl->getLocale(), 0, 2)) . 'Provider';
 
         if (!class_exists($provider_class)) {
-            $provider_class = 'OpenPsa\\Ranger\\Provider\\DefaultProvider';
+            $provider_class = DefaultProvider::class;
         }
         $provider = new $provider_class();
 
@@ -275,7 +281,7 @@ class Ranger
         }
 
         if ($this->date_type !== IntlDateFormatter::NONE) {
-            $intl = new IntlDateFormatter($this->locale, $this->date_type, IntlDateFormatter::NONE, $date->getTimezone()->getName());
+            $intl = new IntlDateFormatter($this->locale, $this->date_type, IntlDateFormatter::NONE, $date->getTimezone());
             $formatted .= $intl->format((int) $date->format('U'));
             if ($this->time_type !== IntlDateFormatter::NONE) {
                 $formatted .= $this->date_time_separator;
@@ -283,12 +289,12 @@ class Ranger
         }
 
         if ($this->time_type !== IntlDateFormatter::NONE) {
-            $intl = new IntlDateFormatter($this->locale, IntlDateFormatter::NONE, $this->time_type, $date->getTimezone()->getName());
+            $intl = new IntlDateFormatter($this->locale, IntlDateFormatter::NONE, $this->time_type, $date->getTimezone());
             $formatted .= $intl->format((int) $date->format('U'));
         }
 
         $type = null;
-        foreach ($this->pattern_mask as $i => $part) {
+        foreach ($this->pattern_mask as $part) {
             if ($part['delimiter']) {
                 $parts = explode($part['content'], $formatted, 2);
 
@@ -323,25 +329,22 @@ class Ranger
             $end_copy->setDate($start->format('Y'), $start->format('m'), $start->format('d'));
         }
 
-        $best_match = -2;
-        if ($start->format('Y') !== $end_copy->format('Y')) {
-            $best_match = self::TIMEZONE;
-        } elseif ($start->format('m') !== $end_copy->format('m')) {
-            $best_match = self::YEAR;
-        } elseif ($start->format('d') !== $end_copy->format('d')) {
-            $best_match = self::MONTH;
-        } elseif ($start->format('a') !== $end_copy->format('a')) {
-            $best_match = self::DAY;
-        } elseif ($start->format('H') !== $end_copy->format('H')) {
-            $best_match = self::AM;
-        } elseif ($start->format('i') !== $end_copy->format('i')) {
-            //it makes no sense to display something like 10:00:00 - 30:00...
-            $best_match = self::AM;
-        } elseif ($start->format('s') !== $end_copy->format('s')) {
-            //it makes no sense to display something like 10:00:00 - 30:00...
-            $best_match = self::AM;
-        } else {
-            $best_match = self::SECOND;
+        $map = [
+            'Y' => self::TIMEZONE,
+            'm' => self::YEAR,
+            'd' => self::MONTH,
+            'a' => self::DAY,
+            'H' => self::AM,
+            'i' => self::AM, // it makes no sense to display something like 10:00:00 - 30:00...
+            's' => self::AM, // it makes no sense to display something like 10:00:00 - 30...
+        ];
+        $best_match = self::SECOND;
+
+        foreach ($map as $part => $score) {
+            if ($start->format($part) !== $end_copy->format($part)) {
+                $best_match = $score;
+                break;
+            }
         }
 
         //set to same time to avoid DST problems
@@ -349,7 +352,7 @@ class Ranger
         if (   $start->format('T') !== $end_copy->format('T')
             || (   $this->time_type !== IntlDateFormatter::NONE
                 && $best_match < self::DAY)) {
-            $best_match = -2;
+            $best_match = self::NO_MATCH;
         }
 
         return $best_match;
@@ -378,10 +381,10 @@ class Ranger
         $esc_active = false;
         $part = ['content' => '', 'delimiter' => false];
         foreach (str_split($pattern) as $char) {
-            //@todo the esc char handling is untested
             if ($char == $this->escape_character) {
                 if ($esc_active) {
                     $esc_active = false;
+                    // @todo the esc char handling is untested
                     if ($part['content'] === '') {
                         //Literal '
                         $part['content'] = $char;

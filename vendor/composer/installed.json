@@ -1,24 +1,27 @@
 [
     {
         "name": "openpsa/ranger",
-        "version": "v0.4.0",
-        "version_normalized": "0.4.0.0",
+        "version": "v0.5.0",
+        "version_normalized": "0.5.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/flack/ranger.git",
-            "reference": "c0af25836e5923ee69f57ce4a8ff740b19ecfad6"
+            "reference": "0be786fc544aaf3e529c17e90b6ebfb57828c0df"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/flack/ranger/zipball/c0af25836e5923ee69f57ce4a8ff740b19ecfad6",
-            "reference": "c0af25836e5923ee69f57ce4a8ff740b19ecfad6",
+            "url": "https://api.github.com/repos/flack/ranger/zipball/0be786fc544aaf3e529c17e90b6ebfb57828c0df",
+            "reference": "0be786fc544aaf3e529c17e90b6ebfb57828c0df",
             "shasum": ""
         },
         "require": {
-            "php": ">=5.4.0",
+            "php": ">=5.5.0",
             "symfony/intl": "~2.6|~3.4|~4.0"
         },
-        "time": "2018-07-23T12:30:50+00:00",
+        "suggest": {
+            "ext-intl": "Needed for usage with other locales than 'en'"
+        },
+        "time": "2019-01-22T09:57:01+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -45,17 +48,17 @@
     },
     {
         "name": "symfony/intl",
-        "version": "v4.1.1",
-        "version_normalized": "4.1.1.0",
+        "version": "v4.2.2",
+        "version_normalized": "4.2.2.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/intl.git",
-            "reference": "cb21b901892c0d637f9c2f50860ed2fe29ce4b55"
+            "reference": "9bc515dfd1f02bcf64309ab5fd86bace4f43b86d"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/intl/zipball/cb21b901892c0d637f9c2f50860ed2fe29ce4b55",
-            "reference": "cb21b901892c0d637f9c2f50860ed2fe29ce4b55",
+            "url": "https://api.github.com/repos/symfony/intl/zipball/9bc515dfd1f02bcf64309ab5fd86bace4f43b86d",
+            "reference": "9bc515dfd1f02bcf64309ab5fd86bace4f43b86d",
             "shasum": ""
         },
         "require": {
@@ -68,11 +71,11 @@
         "suggest": {
             "ext-intl": "to use the component with locales other than \"en\""
         },
-        "time": "2018-06-25T11:12:43+00:00",
+        "time": "2019-01-05T16:37:49+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "4.1-dev"
+                "dev-master": "4.2-dev"
             }
         },
         "installation-source": "dist",
@@ -122,17 +125,17 @@
     },
     {
         "name": "symfony/polyfill-intl-icu",
-        "version": "v1.8.0",
-        "version_normalized": "1.8.0.0",
+        "version": "v1.10.0",
+        "version_normalized": "1.10.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/polyfill-intl-icu.git",
-            "reference": "80ee17ae83c10cd513e5144f91a73607a21edb4e"
+            "reference": "f22a90256d577c7ef7efad8df1f0201663d57644"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/polyfill-intl-icu/zipball/80ee17ae83c10cd513e5144f91a73607a21edb4e",
-            "reference": "80ee17ae83c10cd513e5144f91a73607a21edb4e",
+            "url": "https://api.github.com/repos/symfony/polyfill-intl-icu/zipball/f22a90256d577c7ef7efad8df1f0201663d57644",
+            "reference": "f22a90256d577c7ef7efad8df1f0201663d57644",
             "shasum": ""
         },
         "require": {
@@ -142,11 +145,11 @@
         "suggest": {
             "ext-intl": "For best performance"
         },
-        "time": "2018-04-25T14:53:50+00:00",
+        "time": "2018-08-06T14:22:27+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.8-dev"
+                "dev-master": "1.9-dev"
             }
         },
         "installation-source": "dist",
