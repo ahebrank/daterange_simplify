@@ -14,6 +14,7 @@ use DateInterval;
 use Drupal\daterange_simplify\Simplify;
 
 /**
+ * Wrapper for flack/ranger daterange simplifier.
  *
  * @FieldFormatter(
  *   id = "daterange_simplify",
@@ -133,30 +134,24 @@ class SimplifyFormatter extends FormatterBase implements ContainerFactoryPluginI
     $settings = $this->getSettings();
     $summary = [];
 
-    $dt = new DateTime();
-    $now = $dt->format('c');
-    $in_two_hours = $dt->add(new DateInterval('PT2H'))->format('c');
     $summary[] = $this->t('2 hours apart: @sample', [
-      '@sample' => $this->simplify->daterange($now, $in_two_hours,
+      '@sample' => $this->simplify->daterange(new DateTime(), (new DateTime())->add(new DateInterval('PT2H')),
                     $settings['date_format'],
                     $settings['time_format'],
                     $settings['range_separator'],
                     $settings['date_time_separator'],
                     $this->language_manager->getCurrentLanguage()->getId()
-                  ),
+      ),
     ]);
 
-    $dt = new DateTime();
-    $now = $dt->format('c');
-    $in_two_days = $dt->add(new DateInterval('P2D'))->format('c');
     $summary[] = $this->t('2 days apart: @sample', [
-      '@sample' => $this->simplify->daterange($now, $in_two_days,
+      '@sample' => $this->simplify->daterange(new DateTime(),  (new DateTime())->add(new DateInterval('P2D')),
                     $settings['date_format'],
                     $settings['time_format'],
                     $settings['range_separator'],
                     $settings['date_time_separator'],
                     $this->language_manager->getCurrentLanguage()->getId()
-                  ),
+      ),
     ]);
 
     return $summary;
@@ -169,7 +164,7 @@ class SimplifyFormatter extends FormatterBase implements ContainerFactoryPluginI
     $elements = [];
     $settings = $this->getSettings();
 
-    foreach ($items as $delta => $item) {
+    foreach ($items as $item) {
       $start = $this->simplify->prepDate($item->value);
       $end = $this->simplify->prepDate($item->end_value);
 

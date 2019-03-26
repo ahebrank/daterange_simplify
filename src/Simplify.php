@@ -4,21 +4,28 @@ namespace Drupal\daterange_simplify;
 // this is a hack -- the module should be installed by composer with dependencies
 // but if these are not loaded, they're included in the module distribution
 if (!class_exists('OpenPsa\Ranger\Ranger')) {
-  require_once(__DIR__ . '/../vendor/autoload.php');
+  require_once __DIR__ . '/../vendor/autoload.php';
 }
 
 use OpenPsa\Ranger\Ranger;
 use DateTime;
 use DateTimeZone;
 
+/**
+ * Daterange simplification tasks.
+ */
 class Simplify {
+
   /**
-   * return allowed formats
-   * see http://php.net/manual/en/class.intldateformatter.php
+   * Return allowed formats.
    *
-   * @param bool $restrict_intl : limit options available in the absence of intl support
+   * See http://php.net/manual/en/class.intldateformatter.php.
+   *
+   * @param bool $restrict_intl
+   *   Limit options available in the absence of intl support.
    *
    * @return array
+   *   Possible options.
    */
   public static function getAllowedFormats($restrict_intl = FALSE) {
     if ($restrict_intl) {
@@ -34,12 +41,16 @@ class Simplify {
     switch ($format) {
       case 'none':
         return \IntlDateFormatter::NONE;
+
       case 'full':
         return \IntlDateFormatter::FULL;
+
       case 'long':
         return \IntlDateFormatter::LONG;
+
       case 'medium':
         return \IntlDateFormatter::MEDIUM;
+
       case 'short':
         return \IntlDateFormatter::SHORT;
     }
