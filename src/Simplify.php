@@ -8,8 +8,7 @@ if (!class_exists('OpenPsa\Ranger\Ranger')) {
 }
 
 use OpenPsa\Ranger\Ranger;
-use DateTime;
-use DateTimeZone;
+use Drupal\Core\Datetime\DrupalDateTime;
 
 /**
  * Daterange simplification tasks.
@@ -60,7 +59,7 @@ class Simplify {
   /**
    * Simplify a date range.
    */
-  public static function daterange(DateTime $start, DateTime $end, $date_format = 'medium', $time_format = 'short', $range_separator = null, $date_time_separator = null, $locale = 'en') {
+  public static function daterange(DrupalDateTime $start, DrupalDateTime $end, $date_format = 'medium', $time_format = 'short', $range_separator = null, $date_time_separator = null, $locale = 'en') {
     $date_format = Simplify::getDateFormat($date_format);
     $time_format = Simplify::getDateFormat($time_format);
 
@@ -74,38 +73,21 @@ class Simplify {
     if (!is_null($range_separator)) {
       $ranger->setRangeSeparator($range_separator);
     }
-    if (is_numeric($start)) {
-      $start = date('c', $start);
-    }
-    if (is_numeric($end)) {
-      $end = date('c', $end);
-    }
-    if ($start instanceof \DateTime) {
-      $start = $start->format('c');
-    }
-    if ($end instanceof \DateTime) {
-      $end = $end->format('c');
-    }
+    $start = $start->format('c');
     if (empty($end)) {
       $end = $start;
+    }
+    else {
+      $end = $end->format('c');
     }
     return $ranger->format($start, $end);
   }
 
   /**
-   * Correct for user timezone, convert to DateTime.
+   * Correct for user timezone, convert to DrupalateTime.
    */
-  public function prepDate($datetime) {
-    $tz = drupal_get_user_timezone();
-    if (in_array($tz, timezone_identifiers_list())) {
-      $date = new DateTime($datetime, new DateTimeZone('UTC'));
-      $date->setTimezone(new DateTimeZone($tz));
-    }
-    else {
-      // Bail out.
-      $date = new DateTime($datetime);
-    }
-    return $date;
+  public function toDrupalDateTime($datetime) {
+    return new DrupalDateTime($datetime, 'UTC');
   }
 
 }

@@ -145,7 +145,7 @@ class SimplifyFormatter extends FormatterBase implements ContainerFactoryPluginI
     ]);
 
     $summary[] = $this->t('2 days apart: @sample', [
-      '@sample' => $this->simplify->daterange(new DateTime(),  (new DateTime())->add(new DateInterval('P2D')),
+      '@sample' => $this->simplify->daterange(new DateTime(), (new DateTime())->add(new DateInterval('P2D')),
                     $settings['date_format'],
                     $settings['time_format'],
                     $settings['range_separator'],
@@ -165,8 +165,8 @@ class SimplifyFormatter extends FormatterBase implements ContainerFactoryPluginI
     $settings = $this->getSettings();
 
     foreach ($items as $item) {
-      $start = $this->simplify->prepDate($item->value);
-      $end = $this->simplify->prepDate($item->end_value);
+      $start = $this->simplify->toDrupalDateTime($item->value);
+      $end = $this->simplify->toDrupalDateTime($item->end_value);
 
       $simplified = $this->simplify->daterange($start, $end,
         $settings['date_format'],
