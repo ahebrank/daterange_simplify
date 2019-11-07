@@ -87,7 +87,14 @@ class Simplify {
    * Correct for user timezone, convert to DrupalateTime.
    */
   public function toDrupalDateTime($datetime) {
-    return new DrupalDateTime($datetime, 'UTC');
+    // Assuming times are always stored as UTC...
+    $ddt = new DrupalDateTime($datetime, 'UTC');
+
+    // From DateTimeFormatterBase: convert to user TZ.
+    $timezone = drupal_get_user_timezone();
+    $ddt->setTimeZone(timezone_open($timezone));
+
+    return $ddt;
   }
 
 }

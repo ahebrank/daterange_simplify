@@ -9,7 +9,7 @@ use Drupal\Core\Field\FormatterBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
-use DateTime;
+use Drupal\Core\Datetime\DrupalDateTime;
 use DateInterval;
 use Drupal\daterange_simplify\Simplify;
 
@@ -48,7 +48,7 @@ class SimplifyFormatter extends FormatterBase implements ContainerFactoryPluginI
    *   The view mode.
    * @param array $third_party_settings
    *   Any third party settings settings.
-   * @param \Drupal\Core\Language\LanguageManagerInterface $language_interface
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   Language Manager interface.
    * @param \Drupal\daterange_simplify\Simplify $simplify
    *   Simplify service.
@@ -135,7 +135,7 @@ class SimplifyFormatter extends FormatterBase implements ContainerFactoryPluginI
     $summary = [];
 
     $summary[] = $this->t('2 hours apart: @sample', [
-      '@sample' => $this->simplify->daterange(new DateTime(), (new DateTime())->add(new DateInterval('PT2H')),
+      '@sample' => $this->simplify->daterange(new DrupalDateTime(), (new DrupalDateTime())->add(new DateInterval('PT2H')),
                     $settings['date_format'],
                     $settings['time_format'],
                     $settings['range_separator'],
@@ -145,7 +145,7 @@ class SimplifyFormatter extends FormatterBase implements ContainerFactoryPluginI
     ]);
 
     $summary[] = $this->t('2 days apart: @sample', [
-      '@sample' => $this->simplify->daterange(new DateTime(), (new DateTime())->add(new DateInterval('P2D')),
+      '@sample' => $this->simplify->daterange(new DrupalDateTime(), (new DrupalDateTime())->add(new DateInterval('P2D')),
                     $settings['date_format'],
                     $settings['time_format'],
                     $settings['range_separator'],
