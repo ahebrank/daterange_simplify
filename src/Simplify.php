@@ -87,8 +87,18 @@ class Simplify {
    * Correct for user timezone, convert to DrupalateTime.
    */
   public function toDrupalDateTime($datetime) {
-    // Assuming times are always stored as UTC...
-    $ddt = new DrupalDateTime($datetime, 'UTC');
+    // There are a few ways dates are stored in the datetime field.
+    // 1. Date-only (2019-12-09)
+    // 2. Date + time and All Day: ISO 8601 (2004-02-12T15:19:21+00:00)
+    if (strlen($datetime) == 10) {
+      $format = 'Y-m-d';
+    }
+    else {
+      $format = 'Y-m-d\TH:i:s';
+    }
+
+    // Times are stored in the DB as UTC.
+    $ddt = DrupalDateTime::createFromFormat($format, $datetime, 'UTC');
 
     // From DateTimeFormatterBase: convert to user TZ.
     $timezone = drupal_get_user_timezone();
