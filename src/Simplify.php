@@ -95,7 +95,7 @@ class Simplify {
     $ddt = DrupalDateTime::createFromFormat($format, $datetime, 'UTC');
 
     // From DateTimeFormatterBase: convert to user TZ.
-    $timezone = drupal_get_user_timezone();
+    $timezone = date_default_timezone_get();
     $ddt->setTimeZone(timezone_open($timezone));
 
     return $ddt;
