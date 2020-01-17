@@ -1,12 +1,6 @@
 <?php
 namespace Drupal\daterange_simplify;
 
-// this is a hack -- the module should be installed by composer with dependencies
-// but if these are not loaded, they're included in the module distribution
-if (!class_exists('OpenPsa\Ranger\Ranger')) {
-  require_once __DIR__ . '/../vendor/autoload.php';
-}
-
 use OpenPsa\Ranger\Ranger;
 use Drupal\Core\Datetime\DrupalDateTime;
 
