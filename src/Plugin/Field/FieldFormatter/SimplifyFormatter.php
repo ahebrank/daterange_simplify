@@ -166,7 +166,13 @@ class SimplifyFormatter extends FormatterBase implements ContainerFactoryPluginI
 
     foreach ($items as $item) {
       $start = $this->simplify->toDrupalDateTime($item->value);
-      $end = $this->simplify->toDrupalDateTime($item->end_value);
+      // If there is no end_value, set the end time to the start time.
+      if ($item->end_value) {
+        $end = $this->simplify->toDrupalDateTime($item->end_value);
+      }
+      else {
+        $end = $start;
+      }
 
       $simplified = $this->simplify->daterange($start, $end,
         $settings['date_format'],
