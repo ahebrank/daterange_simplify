@@ -1,3 +1,10 @@
 services:
   daterange_simplify.simplify:
     class: Drupal\daterange_simplify\Simplify
+
+  daterange_simplify.twig_extensions:
+    arguments: 
+      - '@renderer'
+    class: Drupal\daterange_simplify\TwigExtension\Extension
+    tags:
+      - { name: twig.extension }

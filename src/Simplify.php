@@ -78,13 +78,33 @@ class Simplify {
   }
 
   /**
+   * Simplify a single date/time.
+   */
+  public static function datetime(DrupalDateTime $time, $date_format = 'medium', $time_format = 'short', $locale = 'en') {
+    $date_format = Simplify::getDateFormat($date_format);
+    $time_format = Simplify::getDateFormat($time_format);
+
+    $ranger = new Ranger($locale);
+    $ranger
+      ->setDateType($date_format)
+      ->setTimeType($time_format);
+
+    $time = $time->format('c');
+    return $ranger->format($time, $time);
+  }
+
+  /**
    * Correct for user timezone, convert to DrupalateTime.
    */
   public function toDrupalDateTime($datetime) {
     // There are a few ways dates are stored in the datetime field.
-    // 1. Date-only (2019-12-09)
-    // 2. Date + time and All Day: ISO 8601 (2004-02-12T15:19:21+00:00)
-    if (strlen($datetime) == 10) {
+    //   1. Date-only (2019-12-09)
+    //   2. Date + time and All Day: ISO 8601 (2004-02-12T15:19:21+00:00)
+    // We'll also check if this is a unixtime.
+    if (is_numeric($datetime)) {
+      $format = 'U';
+    }
+    elseif (strlen($datetime) == 10) {
       $format = 'Y-m-d';
     }
     else {
